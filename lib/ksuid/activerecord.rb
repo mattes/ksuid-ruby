@@ -9,6 +9,12 @@ module KSUID
     extend ActiveSupport::Concern
 
     class_methods do
+      def act_as_ksuids(*fields)
+        fields.each do |f|
+          self.act_as_ksuid(f.to_sym)
+        end
+      end
+
       def act_as_ksuid(field = :id, opts = {})
         if opts[:binary]
           self.send(:attribute, field.to_sym, :ksuid_binary, default: -> { KSUID.new })

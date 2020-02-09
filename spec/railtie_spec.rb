@@ -20,6 +20,11 @@ ActiveRecord::Schema.define do
     t.ksuid :id, primary_key: true
   end
 
+  create_table :event_multis, force: true, id: false do |t|
+    t.ksuid :id, primary_key: true
+    t.ksuid :foo
+  end
+
   create_table :event_binaries, force: true do |t|
     t.ksuid_binary :ksuid, index: true, unique: true
   end
@@ -28,6 +33,10 @@ end
 # A demonstration model for testing KSUID::ActiveRecord
 class Event < ActiveRecord::Base
   act_as_ksuid :ksuid
+end
+
+class EventMulti < ActiveRecord::Base
+  act_as_ksuids :id, :foo
 end
 
 # A demonstration of KSUIDs as the primary key on a record
@@ -63,6 +72,13 @@ RSpec.describe "ActiveRecord integration" do
       event = Event.create!
 
       expect(event.ksuid_created_at).not_to be_nil
+    end
+
+    it "allows multiple" do
+      event = EventMulti.create!
+
+      expect(event.id_created_at).not_to be_nil
+      expect(event.foo_created_at).not_to be_nil
     end
 
     it "can be looked up via a string, byte array, or KSUID" do
