@@ -37,7 +37,6 @@ module KSUID
       # @return [KSUID::Type] the deserialized KSUID
       def deserialize(value)
         return unless value
-
         KSUID.from_base62(value)
       end
 
@@ -47,7 +46,6 @@ module KSUID
       # @return [String, nil] the base 62-encoded KSUID for storage in the database
       def serialize(value)
         return unless value
-
         KSUID.call(value).to_s
       end
 

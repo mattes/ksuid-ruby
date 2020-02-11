@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'base62'
-require_relative 'utils'
+require_relative "base62"
+require_relative "utils"
 
 module KSUID
   # Encapsulates the data type for a KSUID
@@ -163,6 +163,14 @@ module KSUID
     # @return [String] the base 62-encoded string for the KSUID
     def to_time
       Time.at(to_i + EPOCH_TIME)
+    end
+
+    def as_json(options = nil)
+      to_s
+    end
+
+    def to_yaml(options = nil)
+      to_s
     end
 
     private
