@@ -6,6 +6,10 @@ require "ksuid/activerecord"
 require "ksuid/activerecord/table_definition"
 require "ksuid/activerecord/schema_statements"
 
+# monkey patching ActiveRecord::ConnectionAdapters::Quoting _type_cast
+# will fix the problem
+#require "ksuid/activerecord/quoting"
+
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 ActiveRecord::Base.logger = Logger.new(IO::NULL)
 ActiveRecord::Schema.verbose = false
@@ -21,10 +25,6 @@ ActiveRecord::Schema.define do
   end
 
   create_table :patients, force: true, id: :ksuid do |t|
-    t.string :name
-  end
-
-  create_table :problem_patients, force: true, id: :ksuid do |t|
     t.string :name
   end
 end
@@ -43,14 +43,8 @@ end
 
 class Patient < ActiveRecord::Base
   act_as_ksuid :id
-  has_many :appointments
-  has_many :physicians, through: :appointments
-end
-
-class ProblemPatient < ActiveRecord::Base
-  act_as_ksuid :id
-  has_many :critical_appointments, class_name: "Appointment"
-  has_many :physicians, through: :critical_appointments
+  has_many :foobar, class_name: "Appointment" # <---- using class_name here
+  has_many :physicians, through: :foobar
 end
 
 ActiveSupport.run_load_hooks(:active_record, ActiveRecord::Base)
@@ -63,18 +57,7 @@ RSpec.describe "ActiveRecord integration" do
 
     expect(patient.physicians.first).to eq(physician)
     expect(physician.patients.first).to eq(patient)
-    expect(patient.appointments.first).to eq(appointment)
-    expect(physician.appointments.first).to eq(appointment)
-  end
-
-  it "loads all associations correctly when class_name is used" do
-    patient = ProblemPatient.create!(name: "Will")
-    physician = Physician.create!(name: "Dr. Bob")
-    appointment = Appointment.create!(patient_id: patient.id, physician_id: physician.id)
-
-    expect(patient.physicians.first).to eq(physician)
-    expect(physician.patients.first).to eq(patient)
-    expect(patient.appointments.first).to eq(appointment)
+    expect(patient.foobar.first).to eq(appointment)
     expect(physician.appointments.first).to eq(appointment)
   end
 end
