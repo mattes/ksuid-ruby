@@ -51,9 +51,10 @@ RSpec.describe "ActiveRecord integration" do
     physician = Physician.create!(name: "Dr. Bob")
     appointment = Appointment.create!(patient_id: patient.id, physician_id: physician.id)
 
-    expect(patient.physicians.first).to eq(physician)
-    expect(physician.patients.first).to eq(patient)
     expect(patient.appointments.first).to eq(appointment)
     expect(physician.appointments.first).to eq(appointment)
+
+    expect(patient.physicians.first).to eq(physician)
+    expect(physician.patients.first).to eq(patient)
   end
 end
