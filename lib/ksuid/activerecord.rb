@@ -2,7 +2,6 @@
 
 require "ksuid/activerecord/binary_type"
 require "ksuid/activerecord/type"
-require "ksuid/activerecord/quoting"
 
 module KSUID
   # Enables an Active Record model to have a KSUID attribute
