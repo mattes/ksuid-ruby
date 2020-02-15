@@ -31,7 +31,7 @@ end
 
 class Physician < ActiveRecord::Base
   act_as_ksuid :id
-  has_many :foobar, class_name: "Appointment"
+  has_many :foobar, class_name: "Appointment" # <---- using class_name here
   has_many :patients, through: :foobar
 end
 
