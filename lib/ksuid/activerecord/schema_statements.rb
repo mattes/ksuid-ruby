@@ -34,7 +34,7 @@ module KSUID
 
       def self.load_sqlite3
         require "active_record/connection_adapters/sqlite3_adapter"
-        ::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::NATIVE_DATABASE_TYPES[:ksuid] = {
+        ::ActiveRecord::ConnectionAdapters::SQLite3Adapter::NATIVE_DATABASE_TYPES[:ksuid] = {
           name: "varchar",
           limit: 27,
         }
@@ -42,7 +42,7 @@ module KSUID
 
       def self.load_mysql
         require "active_record/connection_adapters/abstract_mysql_adapter"
-        ::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::NATIVE_DATABASE_TYPES[:ksuid] = {
+        ::ActiveRecord::ConnectionAdapters::MySQLAdapter::NATIVE_DATABASE_TYPES[:ksuid] = {
           name: "varchar",
           limit: 27,
         }
