@@ -8,7 +8,7 @@ require "ksuid/activerecord/schema_statements"
 
 # monkey patching ActiveRecord::ConnectionAdapters::Quoting _type_cast
 # will fix the problem
-#require "ksuid/activerecord/quoting"
+# require "ksuid/activerecord/quoting"
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 ActiveRecord::Base.logger = Logger.new(IO::NULL)

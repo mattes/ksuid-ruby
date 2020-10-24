@@ -174,6 +174,7 @@ module KSUID
     end
 
     # see https://github.com/rails/rails/blob/6-0-stable/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb#L14
+    # https://github.com/rails/rails/blob/5ccc67605ec462a8e164635c75be84a3af0234f5/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb#L14
     def value_for_database
       to_s
     end

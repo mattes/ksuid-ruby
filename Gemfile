@@ -24,7 +24,7 @@ end
 group :development, :test do
   gem 'pry'
   gem 'rake', '< 11'
-  gem 'rails'
+  gem 'rails', github: "rails/rails", ref: "master"
   gem 'sqlite3'
   gem 'pg'
 end
