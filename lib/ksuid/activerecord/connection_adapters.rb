@@ -3,14 +3,14 @@ module KSUID
     module ConnectionAdapters
       module SQLite3AdapterExtension
         def initialize_type_map(m = type_map)
-          register_class_with_limit m, %r(ksuid)i, ::KSUID::ActiveRecord::Type
+          register_class_with_limit m, %r(ksuid)i, KSUID::ActiveRecord::Type
           super
         end
       end
 
       module PostgreSQLAdapterExtension
         def initialize_type_map(m = type_map)
-          register_class_with_limit m, "ksuid", ::KSUID::ActiveRecord::Type
+          register_class_with_limit m, "ksuid", KSUID::ActiveRecord::Type
           super
         end
       end
