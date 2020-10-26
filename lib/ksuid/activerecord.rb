@@ -8,6 +8,7 @@ module KSUID
     extend ActiveSupport::Concern
 
     included do
+
       # after_initialize initializes a model's primary key with a new KSUID
       after_initialize do |obj|
         return if !obj.respond_to?(:new_record?) || !obj.class.respond_to?(:type_for_attribute)

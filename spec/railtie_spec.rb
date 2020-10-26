@@ -4,8 +4,8 @@ require "rails"
 require "active_record"
 require "logger"
 
-#ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
-ActiveRecord::Base.establish_connection(adapter: "postgresql", database: "ksuid-ruby", host: "localhost", user: "postgres")
+# for postgres: RAILS_DATABASE="postgres://user:pw@localhost:5432/database"
+ActiveRecord::Base.establish_connection(ENV.fetch("RAILS_DATABASE", "sqlite3::memory:"))
 ActiveRecord::Base.logger = Logger.new(IO::NULL)
 ActiveRecord::Schema.verbose = false
 
@@ -14,7 +14,11 @@ require "ksuid/activerecord/table_definition"
 require "ksuid/activerecord/connection_adapters"
 
 ActiveRecord::Schema.define do
-  #execute("CREATE DOMAIN ksuid AS text ")
+  begin
+    # TODO make this nicer. only execute for postgres connections
+    execute("CREATE DOMAIN ksuid AS text ")
+  rescue
+  end
 
   create_table :events, force: true do |t|
     t.ksuid :ksuid, index: true, unique: true
