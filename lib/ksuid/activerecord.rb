@@ -4,11 +4,11 @@ require "ksuid/activerecord/binary_type"
 require "ksuid/activerecord/type"
 
 module KSUID
-  # Enables an Active Record model to have a KSUID attribute
   module ActiveRecordExtension
     extend ActiveSupport::Concern
 
     included do
+      # after_initialize initializes a model's primary key with a new KSUID
       after_initialize do |obj|
         return if !obj.respond_to?(:new_record?) || !obj.class.respond_to?(:type_for_attribute)
 
@@ -28,9 +28,9 @@ module KSUID
 
       def act_as_ksuid(field = :id, opts = {})
         if opts[:binary]
-          self.send(:attribute, field.to_sym, :ksuid_binary, default: -> { KSUID.new })
+          self.send(:attribute, field.to_sym, :ksuid_binary)
         else
-          self.send(:attribute, field.to_sym, :ksuid, default: -> { KSUID.new })
+          self.send(:attribute, field.to_sym, :ksuid)
         end
       end
     end

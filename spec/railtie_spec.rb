@@ -66,17 +66,24 @@ RSpec.describe "ActiveRecord integration" do
   context "with a non-primary field as the KSUID" do
     after { Event.delete_all }
 
-    it "generates a KSUID upon initialization" do
+    it "won't generate a KSUID upon initialization" do
       event = Event.new
-
-      expect(event.ksuid).to be_a(KSUID::Type)
+      expect(event.ksuid).to be_nil
     end
 
     it "restores a KSUID from the database" do
-      ksuid = Event.create!.ksuid
+      ksuid = Event.create!(ksuid: KSUID.new).ksuid
       event = Event.last
 
       expect(event.ksuid).to eq(ksuid)
+    end
+
+    it "allows multiple" do
+      event = EventMulti.create!
+
+      expect(event.id).to be_a(KSUID::Type)
+      expect(event.id.to_s.size).to eq(27)
+      expect(event.foo).to be_nil
     end
 
     it "can be looked up via a string, byte array, or KSUID" do
@@ -94,28 +101,23 @@ RSpec.describe "ActiveRecord integration" do
 
     it "generates a KSUID upon initialization" do
       event = EventPrimaryKey.new
-
       expect(event.id).to be_a(KSUID::Type)
+      expect(event.id.to_s.size).to eq(27)
     end
   end
 
   context "with a binary KSUID field" do
     after { EventBinary.delete_all }
 
-    it "generates a KSUID upon initialization" do
-      event = EventBinary.new
-
-      expect(event.ksuid).to be_a(KSUID::Type)
-    end
-
     it "persists the KSUID to the database" do
-      event = EventBinary.create
-
+      event = EventBinary.create(ksuid: KSUID.new)
       expect(event.ksuid).to be_a(KSUID::Type)
     end
   end
 
   context "with reflected KSUID type" do
+    after { Patient.delete_all }
+
     it "initializes a new record with a new KSUID" do
       p = Patient.new
       expect(p.id).to be_a(KSUID::Type)
@@ -148,6 +150,15 @@ RSpec.describe "ActiveRecord integration" do
       p = Patient.new
       p.id = nil
       expect { p.save }.to raise_exception ActiveRecord::NotNullViolation
+    end
+
+    it "can be looked up via a string, byte array, or KSUID" do
+      id = KSUID.new
+      patient = Patient.create!(id: id)
+
+      expect(Patient.find_by(id: id.to_s)).to eq(patient)
+      expect(Patient.find_by(id: id.to_bytes)).to eq(patient)
+      expect(Patient.find_by(id: id)).to eq(patient)
     end
   end
 end
