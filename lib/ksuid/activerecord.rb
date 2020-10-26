@@ -8,6 +8,17 @@ module KSUID
   module ActiveRecordExtension
     extend ActiveSupport::Concern
 
+    included do
+      after_initialize do |obj|
+        return if !obj.respond_to?(:new_record?) || !obj.class.respond_to?(:type_for_attribute)
+
+        pk = obj.class.primary_key
+        if obj.new_record? && obj.class.type_for_attribute(pk).type.to_sym == :ksuid
+          obj.write_attribute(pk, KSUID.new) if obj.read_attribute(pk).blank?
+        end
+      end
+    end
+
     class_methods do
       def act_as_ksuids(*fields)
         fields.each do |f|

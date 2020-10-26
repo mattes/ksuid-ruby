@@ -4,16 +4,20 @@ require "rails"
 require "active_record"
 require "logger"
 
-require "ksuid/activerecord"
-require "ksuid/activerecord/table_definition"
-
-ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
+#ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
+ActiveRecord::Base.establish_connection(adapter: "postgresql", database: "ksuid-ruby", host: "localhost", user: "postgres")
 ActiveRecord::Base.logger = Logger.new(IO::NULL)
 ActiveRecord::Schema.verbose = false
 
+require "ksuid/activerecord"
+require "ksuid/activerecord/table_definition"
+require "ksuid/activerecord/connection_adapters"
+
 ActiveRecord::Schema.define do
+  #execute("CREATE DOMAIN ksuid AS text ")
+
   create_table :events, force: true do |t|
-    t.string :ksuid, index: true, unique: true
+    t.ksuid :ksuid, index: true, unique: true
   end
 
   create_table :event_primary_keys, force: true, id: false do |t|
@@ -27,6 +31,11 @@ ActiveRecord::Schema.define do
 
   create_table :event_binaries, force: true do |t|
     t.ksuid_binary :ksuid, index: true, unique: true
+  end
+
+  create_table :patients, force: true, id: false do |t|
+    t.ksuid :id, primary_key: true
+    t.ksuid :foo
   end
 end
 
@@ -49,7 +58,9 @@ class EventBinary < ActiveRecord::Base
   act_as_ksuid :ksuid, binary: true
 end
 
-ActiveSupport.run_load_hooks(:active_record, ActiveRecord::Base)
+# A demonstration of a model with reflected KSUID types
+class Patient < ActiveRecord::Base
+end
 
 RSpec.describe "ActiveRecord integration" do
   context "with a non-primary field as the KSUID" do
@@ -114,6 +125,42 @@ RSpec.describe "ActiveRecord integration" do
       event = EventBinary.create
 
       expect(event.ksuid).to be_a(KSUID::Type)
+    end
+  end
+
+  context "with reflected KSUID type" do
+    it "initializes a new record with a new KSUID" do
+      p = Patient.new
+      expect(p.id).to be_a(KSUID::Type)
+      expect(p.id.to_s.size).to eq(27)
+
+      # only initialize primary key
+      expect(p.foo).to eq(nil)
+    end
+
+    it "doesn't initialize a new record with a new KSUID if KSUID is already given" do
+      id = KSUID.new
+      p = Patient.new(id: id)
+      expect(p.id).to eq(id)
+      expect(p.foo).to eq(nil)
+
+      p2 = Patient.create(id: id)
+      expect(p2.id).to eq(id)
+      expect(p2.foo).to eq(nil)
+    end
+
+    it "doesn't initialize a persisted record" do
+      p = Patient.create!
+      p2 = Patient.find(p.id)
+      expect(p2.persisted?).to be true
+      expect(p2.id).to eq(p.id)
+      expect(p2.foo).to eq(nil)
+    end
+
+    it "only initializes in after_initialize" do
+      p = Patient.new
+      p.id = nil
+      expect { p.save }.to raise_exception ActiveRecord::NotNullViolation
     end
   end
 end

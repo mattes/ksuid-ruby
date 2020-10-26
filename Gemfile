@@ -26,6 +26,7 @@ group :development, :test do
   gem 'rake', '< 11'
   gem 'rails'
   gem 'sqlite3'
+  gem 'pg'
 end
 
 group :ci do
