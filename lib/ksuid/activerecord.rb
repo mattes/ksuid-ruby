@@ -32,14 +32,6 @@ module KSUID
         else
           self.send(:attribute, field.to_sym, :ksuid, default: -> { KSUID.new })
         end
-
-        self.instance_eval do
-          define_method "#{field.to_s}_created_at" do
-            k = self.send(field)
-            return nil unless k
-            k.to_time
-          end
-        end
       end
     end
   end

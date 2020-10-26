@@ -79,19 +79,6 @@ RSpec.describe "ActiveRecord integration" do
       expect(event.ksuid).to eq(ksuid)
     end
 
-    it "can be used as a timestamp for the created_at" do
-      event = Event.create!
-
-      expect(event.ksuid_created_at).not_to be_nil
-    end
-
-    it "allows multiple" do
-      event = EventMulti.create!
-
-      expect(event.id_created_at).not_to be_nil
-      expect(event.foo_created_at).not_to be_nil
-    end
-
     it "can be looked up via a string, byte array, or KSUID" do
       id = KSUID.new
       event = Event.create!(ksuid: id)
