@@ -14,6 +14,13 @@ module KSUID
           super
         end
       end
+
+      module AbstractAdapterExtension
+        def initialize_type_map(m = type_map)
+          register_class_with_limit m, %r(ksuid)i, KSUID::ActiveRecord::Type
+          super
+        end
+      end
     end
   end
 end
@@ -26,4 +33,9 @@ end
 if defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
   ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.prepend(KSUID::ActiveRecord::ConnectionAdapters::PostgreSQLAdapterExtension)
   ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::NATIVE_DATABASE_TYPES[:ksuid] = { name: "ksuid" }
+end
+
+if defined?(ActiveRecord::ConnectionAdapters::AbstractAdapter)
+  ActiveRecord::ConnectionAdapters::AbstractAdapter.prepend(KSUID::ActiveRecord::ConnectionAdapters::AbstractAdapterExtension)
+  #ActiveRecord::ConnectionAdapters::AbstractAdapter::NATIVE_DATABASE_TYPES[:ksuid] = { name: "ksuid" }
 end
