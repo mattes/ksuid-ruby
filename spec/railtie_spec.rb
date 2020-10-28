@@ -98,6 +98,12 @@ RSpec.describe "ActiveRecord integration" do
       expect(Event.find_by(ksuid: id.to_bytes)).to eq(event)
       expect(Event.find_by(ksuid: id)).to eq(event)
     end
+
+    it "can be queried with 'where'" do
+      event = Event.create!(ksuid: KSUID.new)
+      result = Event.where("events.ksuid = ?", event.ksuid).take
+      expect(result.ksuid).to eq(event.ksuid)
+    end
   end
 
   context "with a primary key field as the KSUID" do
@@ -107,6 +113,12 @@ RSpec.describe "ActiveRecord integration" do
       event = EventPrimaryKey.new
       expect(event.id).to be_a(KSUID::Type)
       expect(event.id.to_s.size).to eq(27)
+    end
+
+    it "can be queried with 'where'" do
+      event = EventPrimaryKey.create!
+      result = EventPrimaryKey.where("event_primary_keys.id = ?", event.id).take
+      expect(result.id).to eq(event.id)
     end
   end
 

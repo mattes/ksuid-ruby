@@ -173,6 +173,11 @@ module KSUID
       to_s
     end
 
+    # see https://github.com/rails/rails/blob/6-0-stable/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb#L14
+    def value_for_database
+      to_s
+    end
+
     private
 
     # The KSUID as a byte array
