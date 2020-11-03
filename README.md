@@ -28,7 +28,7 @@ for Postgres and SQLite so no annotation is required.
 
 For SQLite this works out of the box because of its dynamic typing.  
 
-For Postgres you will have to create a custom type by hand first by running `CREATE DOMAIN ksuid AS text` once.  
+For Postgres a custom data type is created.
 
 Please note that MySQL does not support custom types, you're stuck with `act_as_ksuid`. 
 

@@ -14,6 +14,15 @@ module KSUID
           super
         end
       end
+
+      module PostgreSQLSchemaDumperExtension
+        def extensions(stream)
+          super
+          stream.puts "  # Create a custom data ype for KSUIDs"
+          stream.puts "  execute('CREATE DOMAIN ksuid AS text')"
+          stream.puts
+        end
+      end
     end
   end
 end
@@ -26,4 +35,5 @@ end
 if defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
   ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.prepend(KSUID::ActiveRecord::ConnectionAdapters::PostgreSQLAdapterExtension)
   ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::NATIVE_DATABASE_TYPES[:ksuid] = { name: "ksuid" }
+  ActiveRecord::ConnectionAdapters::PostgreSQL::SchemaDumper.prepend(KSUID::ActiveRecord::ConnectionAdapters::PostgreSQLSchemaDumperExtension)
 end
