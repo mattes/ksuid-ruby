@@ -173,8 +173,15 @@ module KSUID
       to_s
     end
 
+    # Rails 6.0
     # see https://github.com/rails/rails/blob/6-0-stable/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb#L14
     def value_for_database
+      to_s
+    end
+
+    # Rails 6.1
+    # https://github.com/rails/rails/blob/6-1-stable/activerecord/lib/active_record/sanitization.rb#L191
+    def id_for_database
       to_s
     end
 
