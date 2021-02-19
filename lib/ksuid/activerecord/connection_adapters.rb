@@ -18,8 +18,8 @@ module KSUID
       module PostgreSQLSchemaDumperExtension
         def extensions(stream)
           super
-          stream.puts "  # Create a custom data type for KSUIDs"
-          stream.puts "  execute('CREATE DOMAIN ksuid AS text')"
+          stream.puts "  # Create a custom data type for KSUIDs (if it doesn't exist, yet)"
+          stream.puts '  begin; execute("CREATE DOMAIN ksuid AS text"); rescue; end'
           stream.puts
         end
       end
